@@ -20,9 +20,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/home');
-              },
+              onTap: menu != SelectedMenu.Home
+                  ? () {
+                      Navigator.popAndPushNamed(context, '/nhome');
+                    }
+                  : () {},
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
@@ -40,7 +42,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               alignment: Alignment.centerRight,
               child: Text(
                 title,
-                style: GoogleFonts.poppins(fontSize: 25),
+                style: Theme.of(context).textTheme.headline3,
               ),
             ),
             GestureDetector(

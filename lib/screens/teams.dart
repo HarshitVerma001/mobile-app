@@ -1,14 +1,12 @@
 import 'package:dsc_app/constants/constants.dart';
-import 'package:dsc_app/networking/networking.dart';
 import 'package:dsc_app/widgets/app_bar.dart';
-import 'package:dsc_app/widgets/member_detail_card.dart';
-import 'package:flutter/gestures.dart';
+import 'package:dsc_app/widgets/team_list.dart';
+import 'package:dsc_app/widgets/team_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:convert';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dsc_app/models/team.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:http/http.dart' as http;
 
 TeamDetails _team;
@@ -29,118 +27,11 @@ class _TeamState extends State<Team> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'DSC TIET',
+        title: 'Meet The Team',
         menu: SelectedMenu.Team,
       ),
       body: TeamCategoryBuilder(),
     );
-  }
-}
-
-class TeamCategoryBuilder extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: getData(),
-        builder: (BuildContext context, snapshot) {
-          TeamDetails _teamData = snapshot.data;
-
-          if (snapshot.connectionState == ConnectionState.none &&
-              snapshot.hasData == null) {
-            return Container();
-          }
-          if (snapshot.hasData) {
-            return ListView.builder(
-              cacheExtent: 1000,
-              addAutomaticKeepAlives: true,
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              dragStartBehavior: DragStartBehavior.start,
-              itemCount: _team.category.length,
-              itemBuilder: (BuildContext context, int index) {
-                TeamCategory _teamCategory = _teamData.category[index];
-                return SingleChildScrollView(
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: 30,
-                      ),
-                      Center(
-                        child: Container(
-                          child: Text("Meet the team",
-                              style: GoogleFonts.poppins(
-                                  color: Colors.black,
-                                  fontSize: 35.0,
-                                  fontWeight: FontWeight.bold)),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      Container(
-                        decoration: BoxDecoration(
-                          //Decoration for category title
-                          color: getColor(index),
-                          borderRadius: BorderRadius.only(
-                            bottomRight: Radius.circular(10.0),
-                            topLeft: Radius.circular(10.0),
-                          ),
-                        ),
-                        child: Text(
-                          _teamCategory.name, //Category name
-                          style: KMemberCategryStyle,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 30.0,
-                      ),
-                      Text(
-                        "Head",
-                        style: KMemberCategryStyleHeading,
-                      ),
-                      CarouselSlider.builder(
-                          // Carousel for building the heads card
-                          height: 270,
-                          itemCount: _teamCategory.heads.length,
-                          enableInfiniteScroll: false,
-                          itemBuilder: (BuildContext context, int i) {
-                            return MemberCard(
-                              name: _teamCategory.heads[i].name,
-                              image: _teamCategory.heads[i].image,
-                              role: _teamCategory.heads[i].role,
-                              id: i,
-                            );
-                          }),
-                      SizedBox(
-                        height: 30.0,
-                      ),
-                      Text(
-                        "Members",
-                        style: KMemberCategryStyleHeading,
-                      ),
-                      CarouselSlider.builder(
-                          // Carousel for building the members card
-                          height: 270,
-                          itemCount: _teamData.category[index].members.length,
-                          enableInfiniteScroll: false,
-                          itemBuilder: (BuildContext context, int j) {
-                            return MemberCard(
-                              name: _teamCategory.members[j].name,
-                              image: _teamCategory.members[j].image,
-                              role: _teamCategory.members[j].role,
-                              id: j,
-                            );
-                          }),
-                    ],
-                  ),
-                );
-              },
-            );
-          } else
-            return Center(
-                child: Container(
-              child:
-                  CircularProgressIndicator(), //incase the data is not available
-            ));
-        });
   }
 }
 
@@ -155,33 +46,127 @@ Future getData() async {
     return 'error';
 }
 
+class TeamCategoryBuilder extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+        future: getData(),
+        builder: (BuildContext context, snapshot) {
+          TeamDetails _teamData = snapshot.data;
+
+          if (snapshot.connectionState == ConnectionState.none &&
+              snapshot.connectionState == ConnectionState.active &&
+              snapshot.connectionState == ConnectionState.waiting &&
+              snapshot.connectionState == ConnectionState.done) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Expanded(
+              child: Container(
+                child: Image.asset(
+                  'lib/assets/undraw_page_not_found_su7k.png',
+                ),
+              ),
+            );
+          } else if (snapshot.hasData) {
+            return ListView.builder(
+              addAutomaticKeepAlives: true,
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              itemCount: _teamData.category.length,
+              itemBuilder: (BuildContext context, int index) {
+                _teamCategory = _teamData.category[index];
+                    
+
+                return SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: 30,
+                      ),
+                      SizedBox(height: 20),
+                      Text(
+                        _teamCategory.name, //Category name
+                        style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontSize: 28.0,
+                            fontWeight: FontWeight.w300),
+                      ),
+                      SizedBox(
+                        height: 30.0,
+                      ),
+                      Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              top: 8.0, bottom: 8.0, left: 16),
+                          child: Text(
+                            "Head",
+                            style: GoogleFonts.poppins(
+                                color: Color.fromRGBO(255, 255, 255, 0.5),
+                                fontSize: 23),
+                          ),
+                        ),
+                      ),
+                      TeamList(
+                        membersList: _teamCategory.heads,
+                      ),
+                      SizedBox(
+                        height: 30.0,
+                      ),
+                      Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              top: 8.0, bottom: 8.0, left: 16),
+                          child: Text(
+                            "Members",
+                            style: GoogleFonts.poppins(
+                                color: Color.fromRGBO(255, 255, 255, 0.5),
+                                fontSize: 23),
+                          ),
+                        ),
+                      ),
+                      TeamList(
+                        membersList: _teamCategory.members,
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          } else
+            return Center(child: CircularProgressIndicator());
+        });
+  }
+}
+
 //Selecting the colour
 Color getColor(int selector) {
   switch (selector) {
     case 1:
       {
-        return Color.fromRGBO(66, 133, 244, 0.7);
+        return Color.fromRGBO(66, 133, 244, 1);
       }
       break;
 
     case 2:
       {
-        return Color.fromRGBO(219, 68, 55, 0.7);
+        return Color.fromRGBO(219, 68, 55, 1);
       }
       break;
     case 3:
       {
-        return Color.fromRGBO(244, 180, 0, 0.7);
+        return Color.fromRGBO(244, 180, 0, 1);
       }
       break;
     case 4:
       {
-        return Color.fromRGBO(15, 157, 88, 0.7);
+        return Color.fromRGBO(15, 157, 88, 1);
       }
       break;
     default:
       {
-        return Color.fromRGBO(219, 68, 55, 0.7);
+        return Color.fromRGBO(219, 68, 55, 1);
       }
       break;
   }

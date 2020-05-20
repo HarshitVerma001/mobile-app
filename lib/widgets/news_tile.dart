@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:dsc_app/screens/news_view.dart';
+
 class NewsTile extends StatelessWidget {
   final data;
-  final Function launcher;
 
-  NewsTile(this.data, this.launcher);
+  NewsTile(this.data);
 
   @override
   Widget build(BuildContext context) {
@@ -11,16 +12,22 @@ class NewsTile extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: ExpansionTile(
         children: <Widget>[
-          IconButton(icon:Icon(Icons.launch),
-          onPressed: (){
-            launcher(data['url']);
-          } ,
+          IconButton(
+            icon: Icon(Icons.launch),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => NewsView(
+                            url: data['url'],
+                          )));
+            },
           )
         ],
         title: Text(
           data['title'],
           style: TextStyle(
-            fontSize: 24,
+            fontSize: 18,
           ),
         ),
       ),

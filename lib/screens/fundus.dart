@@ -15,7 +15,10 @@ class _ContactsState extends State<Contacts> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'DSC TIET' , menu: SelectedMenu.ContactUs,),
+      appBar: CustomAppBar(
+        title: 'DSC TIET',
+        menu: SelectedMenu.ContactUs,
+      ),
       body: MyContactForm(),
     );
   }
@@ -53,12 +56,8 @@ class _MyContactFormState extends State<MyContactForm> {
                         margin:
                             EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                         child: Text(
-                          "Contact Us!",
-                          style: GoogleFonts.poppins(
-                            color: Color(0xFF676C72),
-                            fontSize: 30.0,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          "Fund Our Project !",
+                          style: Theme.of(context).textTheme.headline2,
                         ),
                       ),
                     ),
